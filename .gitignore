@@ -1,3 +1,12 @@
 /data
 __pycache__
 .vscode
+dist/pyeeg-0.4.4-py3.7.egg
+pyeeg.egg-info/PKG-INFO
+build/lib/pyeeg/setup.py
+pyeeg.egg-info/dependency_links.txt
+pyeeg.egg-info/requires.txt
+pyeeg.egg-info/SOURCES.txt
+pyeeg.egg-info/top_level.txt
+Pipfile
+.vscode
