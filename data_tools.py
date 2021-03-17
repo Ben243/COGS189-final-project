@@ -94,3 +94,18 @@ def get_q_a(subjectnum, trialnum):
     qapair = qapair[qapair['trial_desc_cleaned'].isin(['pleasent', 'energetic', 'tense', 'angry', 'afraid', 'happy', 'sad', 'tender'])]
     return qapair.dropna().replace(answer_matrix)#.drop_duplicates('trial_name', 'last').sort_values('trial_name').reset_index(drop=True)
 
+#%%
+def quick_bin_power(X, Band, Fs):
+    C = np.fft.fft(X)
+    C = abs(C)
+    Power = np.zeros(len(Band) - 1)
+    for Freq_Index in range(0, len(Band) - 1):
+        Freq = float(Band[Freq_Index])
+        Next_Freq = float(Band[Freq_Index + 1])
+        Power[Freq_Index] = sum(
+            C[int(np.floor(Freq / Fs * len(X))): 
+                int(np.floor(Next_Freq / Fs * len(X)))]
+        )
+    Power_Ratio = Power / sum(Power)
+    return Power, Power_Ratio
+# %%
