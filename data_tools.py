@@ -12,15 +12,10 @@ import matplotlib.pyplot as plt
 # %%
 def get_recording(subjectnum, trialnum):
     '''retrieves trial eeg recording given a subject number and trial number'''
-    subjectnum = '0' + (str(subjectnum)) if subjectnum < 10 else str(subjectnum)
-    file = r"data\sub-"+str(subjectnum)+r"\eeg\sub-"+str(subjectnum)+r"_task-run"+str(trialnum)+r"_eeg.edf"
-    data = mne.io.read_raw_edf(file)
+    fileName = f"data/sub-{format(subjectnum, '02d')}/eeg/sub-{format(subjectnum, '02d')}_task-run{trialnum}_eeg.edf"
+    data = mne.io.read_raw_edf(fileName)
     raw_data = data.get_data()
-    # you can get the metadata included in the file and a list of all channels:
-    # info = data.info
-    # channels = data.ch_names
-    recording = data.to_data_frame().infer_objects()
-    return recording
+    return data.to_data_frame().infer_objects()
 
 # %%
 def get_events(subjectnum, trialnum):
