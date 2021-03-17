@@ -109,3 +109,29 @@ def quick_bin_power(X, Band, Fs):
     Power_Ratio = Power / sum(Power)
     return Power, Power_Ratio
 # %%
+def consecutive_window_powers(df_, step_size, sample_rate=1000, band = [4,8,12,30,45], band_labels = ['theta','alpha','beta','gamma'], ratio=True):
+    '''does powers for non-overlapping segments of length for the dataframe at various points'''
+    def choice_bin_power(X, Band, Fs, ratio=False):
+        '''does much of the stuff quick_bin_power does but lets you choose to ratio or get raw power values'''
+        C = np.fft.fft(X)
+        C = abs(C)
+        Power = np.zeros(len(Band) - 1)
+        for Freq_Index in range(0, len(Band) - 1):
+            Freq = float(Band[Freq_Index])
+            Next_Freq = float(Band[Freq_Index + 1])
+            Power[Freq_Index] = sum(
+                C[int(np.floor(Freq / Fs * len(X))): 
+                    int(np.floor(Next_Freq / Fs * len(X)))]
+            )
+        Power_Ratio = Power / sum(Power)
+        # return Power, Power_Ratio
+        return Power_Ratio if ratio else Power
+
+    output = None
+    for col in df_.columns:
+        colvals = df_[col].groupby(df_.index //step_size).apply(lambda x: pd.Series(choice_bin_power(x, band, sample_rate, ratio), index=[str(col)+'_'+b+'_ratio' for b in band_labels])).unstack()
+        if output is None:
+            output = colvals #assignment
+        else:
+            output = output.merge(colvals, left_index=True, right_index=True) # merging
+    return output
